@@ -8,29 +8,15 @@ import javafx.stage.Stage;
 import util.DBConnection;
 import model.Student;
 import dao.StudentDAO;
+import view.LoginView;
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
 
-        DBConnection.getConnection();
+        LoginView loginView = new LoginView();
+        loginView.show(stage);
 
-        StudentDAO dao = new StudentDAO();
-
-        Student s = new Student(0, "Megha", "megha@gmail.com", "1234", 8.5, "CSE");
-
-        dao.insertStudent(s);
-
-        Label label = new Label("Welcome to SkillBridge 🚀");
-
-        StackPane root = new StackPane();
-        root.getChildren().add(label);
-
-        Scene scene = new Scene(root, 600, 400);
-
-        stage.setTitle("SkillBridge Placement System");
-        stage.setScene(scene);
-        stage.show();
     }
     public static void main(String[] args) {
         launch();
