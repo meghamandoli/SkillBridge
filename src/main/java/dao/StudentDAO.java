@@ -73,5 +73,27 @@ public class StudentDAO {
 
         return null;
     }
+    public boolean resetPassword(String email, String newPassword){
 
+        try{
+
+            Connection conn = DBConnection.getConnection();
+
+            String query = "UPDATE student SET password=? WHERE email=?";
+
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setString(1,newPassword);
+            ps.setString(2,email);
+
+            int rows = ps.executeUpdate();
+
+            return rows>0;
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

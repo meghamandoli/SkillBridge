@@ -2,7 +2,8 @@ package view;
 
 import dao.StudentDAO;
 import model.Student;
-
+import view.RegisterView;
+import view.StudentDashboard;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,12 +46,47 @@ public class LoginView {
         CheckBox remember = new CheckBox("Remember me");
 
         Hyperlink forgot = new Hyperlink("Forgot password?");
+        forgot.setOnAction(e -> {
 
+            TextInputDialog emailDialog = new TextInputDialog();
+            emailDialog.setHeaderText("Enter your email");
+
+            emailDialog.showAndWait().ifPresent(email -> {
+
+                TextInputDialog passDialog = new TextInputDialog();
+                passDialog.setHeaderText("Enter new password");
+
+                passDialog.showAndWait().ifPresent(newPass -> {
+
+                    StudentDAO dao = new StudentDAO();
+                    boolean updated = dao.resetPassword(email,newPass);
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+                    if(updated){
+                        alert.setContentText("Password Updated");
+                    }else{
+                        alert.setContentText("Email not found");
+                    }
+
+                    alert.show();
+
+                });
+
+            });
+
+        });
         HBox options = new HBox(20, remember, forgot);
         options.setAlignment(Pos.CENTER);
         Button loginButton = new Button("Sign In");
         loginButton.getStyleClass().add("login-btn");
         Hyperlink signup = new Hyperlink("Don't have an account? Sign Up");
+        signup.setOnAction(e -> {
+
+            RegisterView registerView = new RegisterView();
+            registerView.show(stage);
+
+        });
         loginButton.setStyle(
                 "-fx-background-color: linear-gradient(to right,#4facfe,#00f2fe);" +
                         "-fx-text-fill:white;" +
@@ -126,9 +162,8 @@ public class LoginView {
             Student student = dao.loginStudent(email,password);
 
             if(student != null){
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText("Welcome " + student.getName());
-                alert.show();
+                StudentDashboard dashboard = new StudentDashboard();
+                dashboard.show(stage, student.getName());
             }
             else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);
