@@ -163,7 +163,7 @@ public class LoginView {
 
             if(student != null){
                 StudentDashboard dashboard = new StudentDashboard();
-                dashboard.show(stage, student.getName());
+                dashboard.show(stage, student.getName(), student.getId()); // ⭐ FIX
             }
             else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);
