@@ -162,8 +162,15 @@ public class LoginView {
             Student student = dao.loginStudent(email,password);
 
             if(student != null){
+
+                // ⭐ ADD THIS HERE
+                if(remember.isSelected()){
+                    dao.rememberUser(email);
+                }
+
                 StudentDashboard dashboard = new StudentDashboard();
-                dashboard.show(stage, student.getName(), student.getId()); // ⭐ FIX
+                dashboard.show(stage, student.getName(), student.getId());
+
             }
             else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);

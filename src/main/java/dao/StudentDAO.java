@@ -96,4 +96,73 @@ public class StudentDAO {
 
         return false;
     }
+
+public boolean rememberUser(String email){
+
+    try{
+
+        Connection conn = DBConnection.getConnection();
+
+        String query = "UPDATE student SET remember=1 WHERE email=?";
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        ps.setString(1, email);
+
+        ps.executeUpdate();
+
+        return true;
+
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+
+    return false;
+}
+public Student getRememberedUser(){
+
+    try{
+
+        Connection conn = DBConnection.getConnection();
+
+        String query = "SELECT * FROM student WHERE remember=1 LIMIT 1";
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()){
+
+            Student s = new Student();
+
+            s.setId(rs.getInt("id"));
+            s.setName(rs.getString("name"));
+            s.setEmail(rs.getString("email"));
+            s.setPassword(rs.getString("password"));
+            s.setCgpa(rs.getDouble("cgpa"));
+            s.setBranch(rs.getString("branch"));
+
+            return s;
+        }
+
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+
+    return null;
+}
+public void clearRememberedUser(){
+
+    try{
+
+        Connection conn = DBConnection.getConnection();
+
+        String query = "UPDATE student SET remember=0";
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        ps.executeUpdate();
+
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+}
+
 }
