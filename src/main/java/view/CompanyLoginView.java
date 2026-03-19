@@ -14,7 +14,12 @@ import javafx.scene.paint.Color;
 public class CompanyLoginView {
 
     public void show(Stage stage){
+        Company remembered = new CompanyDAO().getRememberedCompany();
 
+        if(remembered != null){
+            new CompanyDashboard().show(stage, remembered.getName(), remembered.getId());
+            return;
+        }
         // -------- LEFT PANEL --------
         Label welcomeTitle = new Label("Welcome Back!");
         welcomeTitle.setStyle("-fx-font-size:28px; -fx-text-fill:white;");
@@ -40,8 +45,42 @@ public class CompanyLoginView {
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
+        CheckBox remember = new CheckBox("Remember me");
+        Hyperlink forgot = new Hyperlink("Forgot password?");
+        forgot.setOnAction(e -> {
 
+            TextInputDialog emailDialog = new TextInputDialog();
+            emailDialog.setHeaderText("Enter your email");
+
+            emailDialog.showAndWait().ifPresent(email -> {
+
+                TextInputDialog passDialog = new TextInputDialog();
+                passDialog.setHeaderText("Enter new password");
+
+                passDialog.showAndWait().ifPresent(newPass -> {
+
+                    CompanyDAO dao = new CompanyDAO();
+                    boolean updated = dao.resetPassword(email,newPass);
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+                    if(updated){
+                        alert.setContentText("Password Updated");
+                    }else{
+                        alert.setContentText("Email not found");
+                    }
+
+                    alert.show();
+                });
+            });
+        });
+        HBox options = new HBox(20, remember, forgot);
+        options.setAlignment(Pos.CENTER);
         Button loginButton = new Button("Sign In");
+        Hyperlink signup = new Hyperlink("Don't have an account? Sign Up");
+        signup.setOnAction(e -> {
+            new CompanyRegisterView().show(stage);
+        });
         loginButton.setStyle(
                 "-fx-background-color: linear-gradient(to right,#00c9a7,#92fe9d);" +
                         "-fx-text-fill:white;" +
@@ -55,7 +94,10 @@ public class CompanyLoginView {
                 loginTitle,
                 emailField,
                 passwordField,
-                loginButton
+                options,
+                loginButton,
+                signup
+
         );
         rightPanel.setAlignment(Pos.CENTER);
         rightPanel.setPadding(new Insets(40));
@@ -98,6 +140,11 @@ public class CompanyLoginView {
             Company company = dao.loginCompany(email, password);
 
             if(company != null){
+
+                if(remember.isSelected()){
+                    dao.rememberCompany(email);
+                }
+
                 new CompanyDashboard().show(stage, company.getName(), company.getId());
             }else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);

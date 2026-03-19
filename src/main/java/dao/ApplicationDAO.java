@@ -128,4 +128,105 @@ public class ApplicationDAO {
 
         return count;
     }
+    public int getApplicationCountByCompany(int companyId){
+
+        int count = 0;
+
+        try{
+            Connection conn = DBConnection.getConnection();
+
+            String query = "SELECT COUNT(*) FROM application a JOIN job j ON a.job_id=j.id WHERE j.company_id=?";
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setInt(1, companyId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                count = rs.getInt(1);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public int getSelectedCountByCompany(int companyId){
+
+        int count = 0;
+
+        try{
+            Connection conn = DBConnection.getConnection();
+
+            String query = "SELECT COUNT(*) FROM application a JOIN job j ON a.job_id=j.id WHERE j.company_id=? AND a.status='Selected'";
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setInt(1, companyId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                count = rs.getInt(1);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public List<String[]> getApplicantsByCompany(int companyId){
+
+        List<String[]> list = new ArrayList<>();
+
+        try{
+            Connection conn = DBConnection.getConnection();
+
+            String query = "SELECT s.id AS student_id, j.id AS job_id, s.name, s.email, j.title, a.status " +
+                    "FROM application a " +
+                    "JOIN student s ON a.student_id = s.id " +
+                    "JOIN job j ON a.job_id = j.id " +
+                    "WHERE j.company_id=?";
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, companyId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                list.add(new String[]{
+                        String.valueOf(rs.getInt("student_id")), // 0
+                        String.valueOf(rs.getInt("job_id")),     // 1
+                        rs.getString("name"),                   // 2
+                        rs.getString("email"),                  // 3
+                        rs.getString("title"),                  // 4
+                        rs.getString("status")                  // 5
+                });
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    public void updateStatus(int studentId, int jobId, String status){
+
+        try{
+            Connection conn = DBConnection.getConnection();
+
+            String query = "UPDATE application SET status=? WHERE student_id=? AND job_id=?";
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setString(1, status);
+            ps.setInt(2, studentId);
+            ps.setInt(3, jobId);
+
+            ps.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }
