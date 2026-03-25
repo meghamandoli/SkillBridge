@@ -199,14 +199,7 @@ public class StudentDashboard {
 
         for(Job job : jobListData){
             jobList.getChildren().add(
-                    createJobCard(
-                            job.getId(),
-                            job.getTitle(),
-                            job.getCompany(),
-                            job.getLocation(),
-                            job.getSalary(),
-                            studentId
-                    )
+                    createJobCard(job, studentId)
             );
         }
 
@@ -242,40 +235,73 @@ public class StudentDashboard {
     }
 
     // ---------- JOB CARD ----------
-    private VBox createJobCard(int jobId, String title, String company,
-                                String location, String salary, int studentId){
+    private VBox createJobCard(Job job, int studentId){
 
         // Title
-        Label jobTitle = new Label(title);
+        Label jobTitle = new Label(job.getTitle());
         jobTitle.getStyleClass().add("job-title");
 
         // Company + location
-        Label companyLabel = new Label(company + " • " + location);
+        Label companyLabel = new Label(job.getCompany() + " • " + job.getLocation());
         companyLabel.getStyleClass().add("job-company");
 
         // Tags
-        Label salaryTag = new Label(salary);
+        Label salaryTag = new Label(job.getSalary());
         salaryTag.getStyleClass().add("tag");
 
-        Label locationTag = new Label(location);
+        Label locationTag = new Label(job.getLocation());
         locationTag.getStyleClass().add("tag");
 
         HBox tags = new HBox(8, salaryTag, locationTag);
 
+        Label reqTag = new Label("Req: " + job.getMinCgpa() + " CGPA");
+        reqTag.setStyle("-fx-font-size:11px; -fx-text-fill: #999;");
+
         // Apply Button
 
         Button apply = new Button("Apply");
-        ApplicationDAO dao = new ApplicationDAO();
+        ApplicationDAO appDao = new ApplicationDAO();
+        model.Student student = new dao.StudentDAO().getStudentById(studentId);
 
-        if(dao.alreadyApplied(studentId, jobId)){
+        boolean isEligible = true;
+        String reason = "Not Eligible";
+
+        if (student != null) {
+            if (student.getCgpa() < job.getMinCgpa()) {
+                isEligible = false;
+                reason = "Low CGPA";
+            } else if (job.isNoBacklogs() && student.getBacklogs() > 0) {
+                isEligible = false;
+                reason = "Active Backlogs";
+            } else if (job.getBranch() != null && !job.getBranch().isEmpty() && !job.getBranch().equalsIgnoreCase("Any") && !job.getBranch().equalsIgnoreCase(student.getBranch())) {
+                isEligible = false;
+                reason = "Branch Mismatch";
+            } else if (job.getSkills() != null && !job.getSkills().trim().isEmpty()) {
+                String[] requiredSkills = job.getSkills().split(",");
+                String studentSkillsStr = student.getSkills() != null ? student.getSkills().toLowerCase() : "";
+                for (String req : requiredSkills) {
+                    if (!studentSkillsStr.contains(req.trim().toLowerCase())) {
+                        isEligible = false;
+                        reason = "Missing Skill";
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(appDao.alreadyApplied(studentId, job.getId())){
             apply.setDisable(true);
             apply.setText("Applied");
+        } else if (!isEligible) {
+            apply.setDisable(true);
+            apply.setText(reason);
+            apply.setStyle("-fx-background-color: #555;");
         }
         apply.getStyleClass().add("apply-btn");
 
         apply.setOnAction(e -> {
 //            ApplicationDAO dao = new ApplicationDAO();
-            boolean success = dao.applyJob(studentId, jobId);
+            boolean success = appDao.applyJob(studentId, job.getId());
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
@@ -301,7 +327,7 @@ public class StudentDashboard {
         card.setPadding(new Insets(15));
 
         // ⭐ MOST IMPORTANT LINE (YOU MISSED THIS)
-        card.getChildren().addAll(jobTitle, companyLabel, tags, bottom);
+        card.getChildren().addAll(jobTitle, companyLabel, tags, reqTag, bottom);
         card.setOnMouseEntered(e -> {
             card.setStyle("-fx-scale-x:1.05; -fx-scale-y:1.05;");
         });
@@ -515,14 +541,7 @@ public class StudentDashboard {
 
         for(Job job : jobListData){
             jobList.getChildren().add(
-                    createJobCard(
-                            job.getId(),
-                            job.getTitle(),
-                            job.getCompany(),
-                            job.getLocation(),
-                            job.getSalary(),
-                            studentId
-                    )
+                    createJobCard(job, studentId)
             );
         }
 

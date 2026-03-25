@@ -12,25 +12,23 @@ public class CompanyDAO {
     public Company loginCompany(String email, String password){
 
         Company company = null;
+        String query = "SELECT * FROM company WHERE email=? AND password=?";
 
-        try{
-            Connection con = DBConnection.getConnection();
-
-            String query = "SELECT * FROM company WHERE email=? AND password=?";
-            PreparedStatement ps = con.prepareStatement(query);
+        try(Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(query)){
 
             ps.setString(1, email);
             ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
-
-            if(rs.next()){
-                company = new Company(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("password")
-                );
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next()){
+                    company = new Company(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("password")
+                    );
+                }
             }
 
         }catch(Exception e){
@@ -41,11 +39,9 @@ public class CompanyDAO {
     }
     public boolean resetPassword(String email, String newPassword){
 
-        try{
-            Connection conn = DBConnection.getConnection();
-
-            String query = "UPDATE company SET password=? WHERE email=?";
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "UPDATE company SET password=? WHERE email=?";
+        try(Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(query)){
 
             ps.setString(1, newPassword);
             ps.setString(2, email);
@@ -62,11 +58,9 @@ public class CompanyDAO {
     }
     public void rememberCompany(String email){
 
-        try{
-            Connection conn = DBConnection.getConnection();
-
-            String query = "UPDATE company SET remember=1 WHERE email=?";
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "UPDATE company SET remember=1 WHERE email=?";
+        try(Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(query)){
 
             ps.setString(1, email);
             ps.executeUpdate();
@@ -77,13 +71,10 @@ public class CompanyDAO {
     }
     public Company getRememberedCompany(){
 
-        try{
-            Connection conn = DBConnection.getConnection();
-
-            String query = "SELECT * FROM company WHERE remember=1 LIMIT 1";
+        String query = "SELECT * FROM company WHERE remember=1 LIMIT 1";
+        try(Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement(query);
-
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery()){
 
             if(rs.next()){
                 return new Company(
@@ -102,11 +93,9 @@ public class CompanyDAO {
     }
     public boolean insertCompany(Company company){
 
-        try{
-            Connection conn = DBConnection.getConnection();
-
-            String query = "INSERT INTO company(name,email,password) VALUES (?,?,?)";
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "INSERT INTO company(name,email,password) VALUES (?,?,?)";
+        try(Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(query)){
 
             ps.setString(1, company.getName());
             ps.setString(2, company.getEmail());

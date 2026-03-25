@@ -137,20 +137,34 @@ public class CompanyDashboard {
         TextField salary = new TextField();
         salary.setPromptText("Salary");
 
+        TextField minCgpa = new TextField();
+        minCgpa.setPromptText("Minimum CGPA (e.g. 7.5)");
+
+        TextField branch = new TextField();
+        branch.setPromptText("Branch (e.g. CSE)");
+
+        CheckBox noBacklogs = new CheckBox("Require No Active Backlogs");
+
+        TextField skills = new TextField();
+        skills.setPromptText("Required Skills (Comma separated)");
+
         Button post = new Button("Post Job");
         post.getStyleClass().add("apply-btn");
 
         post.setOnAction(e -> {
 
             JobDAO dao = new JobDAO();
-            dao.insertJob(title.getText(), location.getText(), salary.getText(), currentCompanyId);
+            double cgpaVal = 0.0;
+            try { cgpaVal = Double.parseDouble(minCgpa.getText()); } catch(Exception ex) {}
+
+            dao.insertJob(title.getText(), location.getText(), salary.getText(), currentCompanyId, cgpaVal, branch.getText(), noBacklogs.isSelected(), skills.getText());
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Job Posted!");
             alert.show();
         });
 
-        VBox form = new VBox(15, title, location, salary, post);
+        VBox form = new VBox(15, title, location, salary, minCgpa, branch, noBacklogs, skills, post);
         form.setPadding(new Insets(30));
         form.getStyleClass().add("glass-card");
 
@@ -186,8 +200,11 @@ public class CompanyDashboard {
 
         Label location = new Label(job.getLocation());
         Label salary = new Label(job.getSalary());
+        
+        Label reqLabel = new Label("Req: " + job.getMinCgpa() + " CGPA | Branch: " + job.getBranch());
+        reqLabel.setStyle("-fx-font-size:11px; -fx-text-fill: #999;");
 
-        VBox card = new VBox(10, title, location, salary);
+        VBox card = new VBox(10, title, location, salary, reqLabel);
         card.getStyleClass().add("job-card");
         card.setPadding(new Insets(15));
 

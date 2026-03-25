@@ -30,6 +30,12 @@ public class RegisterView {
         TextField branchField = new TextField();
         branchField.setPromptText("Branch");
 
+        TextField backlogsField = new TextField();
+        backlogsField.setPromptText("Backlogs (e.g., 0)");
+
+        TextField skillsField = new TextField();
+        skillsField.setPromptText("Skills (Comma separated)");
+
         Button registerBtn = new Button("Register");
 
         VBox layout = new VBox(10,
@@ -39,12 +45,14 @@ public class RegisterView {
                 passwordField,
                 cgpaField,
                 branchField,
+                backlogsField,
+                skillsField,
                 registerBtn
         );
 
         layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout,400,400);
+        Scene scene = new Scene(layout,400,450);
 
         stage.setScene(scene);
         stage.setTitle("Register");
@@ -60,6 +68,12 @@ public class RegisterView {
             student.setPassword(passwordField.getText());
             student.setCgpa(Double.parseDouble(cgpaField.getText()));
             student.setBranch(branchField.getText());
+            try {
+                student.setBacklogs(Integer.parseInt(backlogsField.getText()));
+            } catch (NumberFormatException nfe) {
+                student.setBacklogs(0);
+            }
+            student.setSkills(skillsField.getText());
 
             StudentDAO dao = new StudentDAO();
             dao.insertStudent(student);

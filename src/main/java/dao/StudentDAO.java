@@ -10,19 +10,17 @@ public class StudentDAO {
 
     public boolean insertStudent(Student student) {
 
-        try {
-
-            Connection conn = DBConnection.getConnection();
-
-            String query = "INSERT INTO student(name,email,password,cgpa,branch) VALUES (?,?,?,?,?)";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "INSERT INTO student(name,email,password,cgpa,branch,backlogs,skills) VALUES (?,?,?,?,?,?,?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, student.getName());
             ps.setString(2, student.getEmail());
             ps.setString(3, student.getPassword());
             ps.setDouble(4, student.getCgpa());
             ps.setString(5, student.getBranch());
+            ps.setInt(6, student.getBacklogs());
+            ps.setString(7, student.getSkills());
 
             ps.executeUpdate();
 
@@ -40,31 +38,29 @@ public class StudentDAO {
     }
     public Student loginStudent(String email, String password) {
 
-        try {
-
-            Connection conn = DBConnection.getConnection();
-
-            String query = "SELECT * FROM student WHERE email=? AND password=?";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "SELECT * FROM student WHERE email=? AND password=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, email);
             ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
 
-            if (rs.next()) {
+                    Student s = new Student();
 
-                Student s = new Student();
+                    s.setId(rs.getInt("id"));
+                    s.setName(rs.getString("name"));
+                    s.setEmail(rs.getString("email"));
+                    s.setPassword(rs.getString("password"));
+                    s.setCgpa(rs.getDouble("cgpa"));
+                    s.setBranch(rs.getString("branch"));
+                    s.setBacklogs(rs.getInt("backlogs"));
+                    s.setSkills(rs.getString("skills"));
 
-                s.setId(rs.getInt("id"));
-                s.setName(rs.getString("name"));
-                s.setEmail(rs.getString("email"));
-                s.setPassword(rs.getString("password"));
-                s.setCgpa(rs.getDouble("cgpa"));
-                s.setBranch(rs.getString("branch"));
-
-                return s;
+                    return s;
+                }
             }
 
         } catch (Exception e) {
@@ -75,13 +71,9 @@ public class StudentDAO {
     }
     public boolean resetPassword(String email, String newPassword){
 
-        try{
-
-            Connection conn = DBConnection.getConnection();
-
-            String query = "UPDATE student SET password=? WHERE email=?";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        String query = "UPDATE student SET password=? WHERE email=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1,newPassword);
             ps.setString(2,email);
@@ -90,79 +82,98 @@ public class StudentDAO {
 
             return rows>0;
 
-        }catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
         }
 
         return false;
     }
 
-public boolean rememberUser(String email){
-
-    try{
-
-        Connection conn = DBConnection.getConnection();
+    public boolean rememberUser(String email){
 
         String query = "UPDATE student SET remember=1 WHERE email=?";
-        PreparedStatement ps = conn.prepareStatement(query);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
-        ps.setString(1, email);
+            ps.setString(1, email);
 
-        ps.executeUpdate();
+            ps.executeUpdate();
 
-        return true;
+            return true;
 
-    }catch(Exception e){
-        e.printStackTrace();
-    }
-
-    return false;
-}
-public Student getRememberedUser(){
-
-    try{
-
-        Connection conn = DBConnection.getConnection();
-
-        String query = "SELECT * FROM student WHERE remember=1 LIMIT 1";
-        PreparedStatement ps = conn.prepareStatement(query);
-
-        ResultSet rs = ps.executeQuery();
-
-        if(rs.next()){
-
-            Student s = new Student();
-
-            s.setId(rs.getInt("id"));
-            s.setName(rs.getString("name"));
-            s.setEmail(rs.getString("email"));
-            s.setPassword(rs.getString("password"));
-            s.setCgpa(rs.getDouble("cgpa"));
-            s.setBranch(rs.getString("branch"));
-
-            return s;
+        } catch(Exception e) {
+            e.printStackTrace();
         }
 
-    }catch(Exception e){
-        e.printStackTrace();
+        return false;
     }
+    public Student getRememberedUser(){
 
-    return null;
-}
-public void clearRememberedUser(){
+        String query = "SELECT * FROM student WHERE remember=1 LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
 
-    try{
+            if(rs.next()){
 
-        Connection conn = DBConnection.getConnection();
+                Student s = new Student();
+
+                s.setId(rs.getInt("id"));
+                s.setName(rs.getString("name"));
+                s.setEmail(rs.getString("email"));
+                s.setPassword(rs.getString("password"));
+                s.setCgpa(rs.getDouble("cgpa"));
+                s.setBranch(rs.getString("branch"));
+                s.setBacklogs(rs.getInt("backlogs"));
+                s.setSkills(rs.getString("skills"));
+
+                return s;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    public void clearRememberedUser(){
 
         String query = "UPDATE student SET remember=0";
-        PreparedStatement ps = conn.prepareStatement(query);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
-        ps.executeUpdate();
+            ps.executeUpdate();
 
-    }catch(Exception e){
-        e.printStackTrace();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
-}
+
+    public Student getStudentById(int id) {
+        String query = "SELECT * FROM student WHERE id=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Student s = new Student();
+                    s.setId(rs.getInt("id"));
+                    s.setName(rs.getString("name"));
+                    s.setEmail(rs.getString("email"));
+                    s.setPassword(rs.getString("password"));
+                    s.setCgpa(rs.getDouble("cgpa"));
+                    s.setBranch(rs.getString("branch"));
+                    s.setBacklogs(rs.getInt("backlogs"));
+                    s.setSkills(rs.getString("skills"));
+                    return s;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

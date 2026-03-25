@@ -8,11 +8,10 @@ public class UserDAO {
 
     public int getStudentCount(){
         int count = 0;
-        try{
-            Connection con = DBConnection.getConnection();
-            String query = "SELECT COUNT(*) FROM users WHERE role='student'";
+        String query = "SELECT COUNT(*) FROM users WHERE role='student'";
+        try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery()){
 
             if(rs.next()){
                 count = rs.getInt(1);
@@ -26,11 +25,10 @@ public class UserDAO {
 
     public int getRecruiterCount(){
         int count = 0;
-        try{
-            Connection con = DBConnection.getConnection();
-            String query = "SELECT COUNT(*) FROM users WHERE role='company'";
+        String query = "SELECT COUNT(*) FROM users WHERE role='company'";
+        try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery()){
 
             if(rs.next()){
                 count = rs.getInt(1);
