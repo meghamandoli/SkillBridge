@@ -36,7 +36,6 @@ public class CompanyDashboard {
         stage.show();
     }
 
-    // ---------- SIDEBAR ----------
     private VBox createSidebar(Stage stage){
 
         Label logo = new Label("SkillBridge");
@@ -88,7 +87,6 @@ public class CompanyDashboard {
         return sidebar;
     }
 
-    // ---------- HEADER ----------
     private HBox createHeader(){
 
         Label welcome = new Label("Welcome, " + currentCompanyName);
@@ -101,7 +99,6 @@ public class CompanyDashboard {
         return header;
     }
 
-    // ---------- MAIN ----------
     private VBox createMainContent(){
 
         JobDAO jobDAO = new JobDAO();
@@ -125,7 +122,6 @@ public class CompanyDashboard {
         return main;
     }
 
-    // ---------- POST JOB PAGE ----------
     private VBox createPostJobPage(){
 
         TextField title = new TextField();
@@ -171,7 +167,6 @@ public class CompanyDashboard {
         return new VBox(form);
     }
 
-    // ---------- MY JOBS ----------
     private VBox createMyJobsPage(){
 
         JobDAO dao = new JobDAO();
@@ -192,7 +187,6 @@ public class CompanyDashboard {
         return new VBox(scroll);
     }
 
-    // ---------- JOB CARD ----------
     private VBox createJobCard(Job job){
 
         Label title = new Label(job.getTitle());
@@ -200,7 +194,7 @@ public class CompanyDashboard {
 
         Label location = new Label(job.getLocation());
         Label salary = new Label(job.getSalary());
-        
+
         Label reqLabel = new Label("Req: " + job.getMinCgpa() + " CGPA | Branch: " + job.getBranch());
         reqLabel.setStyle("-fx-font-size:11px; -fx-text-fill: #999;");
 
@@ -211,7 +205,6 @@ public class CompanyDashboard {
         return card;
     }
 
-    // ---------- CARD ----------
     private VBox createCard(String title, String value){
 
         Label t = new Label(title);
@@ -225,7 +218,6 @@ public class CompanyDashboard {
         return card;
     }
 
-    // ---------- LAYOUT ----------
     private BorderPane getLayout(Stage stage, VBox center){
 
         BorderPane root = new BorderPane();

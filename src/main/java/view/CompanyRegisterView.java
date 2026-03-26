@@ -42,7 +42,7 @@ public class CompanyRegisterView {
                 alert.setContentText("Registration Successful!");
                 alert.show();
 
-                new CompanyLoginView().show(stage); // go back to login
+                new CompanyLoginView().show(stage);
             }else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Error!");

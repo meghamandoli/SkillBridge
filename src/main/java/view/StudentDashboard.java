@@ -24,10 +24,10 @@ public class StudentDashboard {
         this.currentStudentName = studentName;
         this.currentStudentId = studentId;
         BorderPane root = new BorderPane();
- // temporary
+
         root.setLeft(createSidebar(stage, studentId));
         root.setTop(createHeader(studentName));
-        // TEMP (later from login)
+
         root.setCenter(createMainContent(studentId));
         Scene scene = new Scene(root,1200,700);
         scene.getStylesheets().add(getClass().getResource("/dashboard.css").toExternalForm());
@@ -47,7 +47,6 @@ public class StudentDashboard {
         return root;
     }
 
-    // ---------- SIDEBAR ----------
     private VBox createSidebar(Stage stage, int studentId){
 
         Label logo = new Label("SkillBridge");
@@ -68,7 +67,7 @@ public class StudentDashboard {
             BorderPane root = new BorderPane();
             root.setLeft(createSidebar(stage, studentId));
             root.setTop(createHeader(currentStudentName));
-            root.setCenter(createJobsPage(studentId)); // ⭐ FIX HERE
+            root.setCenter(createJobsPage(studentId));
             stage.getScene().setRoot(root);
         });
 
@@ -103,7 +102,7 @@ public class StudentDashboard {
             BorderPane root = new BorderPane();
             root.setLeft(createSidebar(stage, studentId));
             root.setTop(createHeader(currentStudentName));
-            root.setCenter(createProfilePage(studentId)); // ⭐ REAL DATA
+            root.setCenter(createProfilePage(studentId));
             stage.getScene().setRoot(root);
         });
 
@@ -130,13 +129,11 @@ public class StudentDashboard {
 
             alert.showAndWait();
 
-            // After alert → go to login screen
-            new LoginView().show(stage);  // ⭐ IMPORTANT
+            new LoginView().show(stage);
         });
         return sidebar;
     }
 
-    // ---------- HEADER ----------
     private HBox createHeader(String studentName){
 
         Label welcome = new Label("Welcome back, " + studentName);
@@ -165,10 +162,8 @@ public class StudentDashboard {
         return header;
     }
 
-    // ---------- MAIN CONTENT ----------
     private VBox createMainContent(int studentId){
 
-        // Top cards
         JobDAO jobDAO = new JobDAO();
         ApplicationDAO appDAO = new ApplicationDAO();
         int totalStudents = getStudentCount();
@@ -186,16 +181,13 @@ public class StudentDashboard {
 
         cards.setPadding(new Insets(20));
 
-        // Fetch jobs from Dao
         List<Job> jobListData = jobDAO.getAllJobs();
 
-        // Job container (VERTICAL)
         FlowPane jobList = new FlowPane();
         jobList.setHgap(25);
         jobList.setVgap(25);
         jobList.setPadding(new Insets(20));
-        jobList.setPrefWrapLength(900); // controls how many cards per row
-
+        jobList.setPrefWrapLength(900);
 
         for(Job job : jobListData){
             jobList.getChildren().add(
@@ -203,7 +195,6 @@ public class StudentDashboard {
             );
         }
 
-        // Scroll pane (IMPORTANT)
         ScrollPane scroll = new ScrollPane(jobList);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
@@ -218,7 +209,7 @@ public class StudentDashboard {
 
         return main;
     }
-    // ---------- CARD ----------
+
     private VBox createCard(String title,String value){
 
         Label t = new Label(title);
@@ -234,18 +225,14 @@ public class StudentDashboard {
         return card;
     }
 
-    // ---------- JOB CARD ----------
     private VBox createJobCard(Job job, int studentId){
 
-        // Title
         Label jobTitle = new Label(job.getTitle());
         jobTitle.getStyleClass().add("job-title");
 
-        // Company + location
         Label companyLabel = new Label(job.getCompany() + " • " + job.getLocation());
         companyLabel.getStyleClass().add("job-company");
 
-        // Tags
         Label salaryTag = new Label(job.getSalary());
         salaryTag.getStyleClass().add("tag");
 
@@ -256,8 +243,6 @@ public class StudentDashboard {
 
         Label reqTag = new Label("Req: " + job.getMinCgpa() + " CGPA");
         reqTag.setStyle("-fx-font-size:11px; -fx-text-fill: #999;");
-
-        // Apply Button
 
         Button apply = new Button("Apply");
         ApplicationDAO appDao = new ApplicationDAO();
@@ -300,7 +285,7 @@ public class StudentDashboard {
         apply.getStyleClass().add("apply-btn");
 
         apply.setOnAction(e -> {
-//            ApplicationDAO dao = new ApplicationDAO();
+
             boolean success = appDao.applyJob(studentId, job.getId());
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -316,17 +301,14 @@ public class StudentDashboard {
             alert.show();
         });
 
-        // Bottom layout
         HBox bottom = new HBox(apply);
         bottom.setAlignment(Pos.CENTER_RIGHT);
 
-        // FINAL CARD
         VBox card = new VBox(12);
         card.getStyleClass().add("job-card");
         card.setPrefWidth(230);
         card.setPadding(new Insets(15));
 
-        // ⭐ MOST IMPORTANT LINE (YOU MISSED THIS)
         card.getChildren().addAll(jobTitle, companyLabel, tags, reqTag, bottom);
         card.setOnMouseEntered(e -> {
             card.setStyle("-fx-scale-x:1.05; -fx-scale-y:1.05;");
@@ -345,10 +327,8 @@ public class StudentDashboard {
         Label companyLabel = new Label(company);
         companyLabel.getStyleClass().add("job-company");
 
-        // Status Label
         Label status = new Label(statusText);
 
-        // 🔥 Dynamic color
         if(statusText.equalsIgnoreCase("Applied")){
             status.getStyleClass().add("status-applied");
         }else if(statusText.equalsIgnoreCase("Selected")){
@@ -424,7 +404,6 @@ public class StudentDashboard {
         VBox main = new VBox(20);
         main.setPadding(new Insets(20));
 
-        // ---------- USER INFO ----------
         VBox profileCard = new VBox(10);
         profileCard.getStyleClass().add("glass-card");
 
@@ -457,7 +436,6 @@ public class StudentDashboard {
 
         profileCard.getChildren().addAll(name, email, branch, cgpa);
 
-        // ---------- STATS ----------
         ApplicationDAO dao = new ApplicationDAO();
 
         int total = dao.getApplicationCount(studentId);
@@ -470,7 +448,6 @@ public class StudentDashboard {
                 createCard("Rejected", String.valueOf(rejected))
         );
 
-        // ---------- APPLICATIONS ----------
         Label appTitle = new Label("My Applications");
         appTitle.getStyleClass().add("job-title");
 

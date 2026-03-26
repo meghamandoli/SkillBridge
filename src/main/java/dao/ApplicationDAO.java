@@ -31,7 +31,7 @@ public class ApplicationDAO {
         String query = "SELECT COUNT(*) FROM application WHERE student_id=?";
         try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query)){
-            
+
             ps.setInt(1, studentId);
 
             try(ResultSet rs = ps.executeQuery()){
@@ -58,7 +58,7 @@ public class ApplicationDAO {
 
         try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query)){
-            
+
             ps.setInt(1, studentId);
 
             try(ResultSet rs = ps.executeQuery()){
@@ -177,18 +177,18 @@ public class ApplicationDAO {
 
         try(Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement(query)){
-            
+
             ps.setInt(1, companyId);
 
             try(ResultSet rs = ps.executeQuery()){
                 while(rs.next()){
                     list.add(new String[]{
-                            String.valueOf(rs.getInt("student_id")), // 0
-                            String.valueOf(rs.getInt("job_id")),     // 1
-                            rs.getString("name"),                   // 2
-                            rs.getString("email"),                  // 3
-                            rs.getString("title"),                  // 4
-                            rs.getString("status")                  // 5
+                            String.valueOf(rs.getInt("student_id")),
+                            String.valueOf(rs.getInt("job_id")),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("title"),
+                            rs.getString("status")
                     });
                 }
             }

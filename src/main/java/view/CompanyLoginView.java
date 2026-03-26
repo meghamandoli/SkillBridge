@@ -20,7 +20,7 @@ public class CompanyLoginView {
             new CompanyDashboard().show(stage, remembered.getName(), remembered.getId());
             return;
         }
-        // -------- LEFT PANEL --------
+
         Label welcomeTitle = new Label("Welcome Back!");
         welcomeTitle.setStyle("-fx-font-size:28px; -fx-text-fill:white;");
 
@@ -36,7 +36,6 @@ public class CompanyLoginView {
                         "-fx-background-radius:20;"
         );
 
-        // -------- LOGIN FORM --------
         Label loginTitle = new Label("Company Login");
         loginTitle.setStyle("-fx-font-size:22px;");
 
@@ -107,7 +106,6 @@ public class CompanyLoginView {
                         "-fx-background-radius:20;"
         );
 
-        // -------- CARD --------
         HBox card = new HBox(leftPanel, rightPanel);
         card.setAlignment(Pos.CENTER);
         card.setSpacing(20);
@@ -118,7 +116,6 @@ public class CompanyLoginView {
         shadow.setColor(Color.gray(0,0.4));
         card.setEffect(shadow);
 
-        // -------- ROOT --------
         StackPane root = new StackPane(card);
         root.setAlignment(Pos.CENTER);
         root.setStyle(
@@ -130,7 +127,6 @@ public class CompanyLoginView {
         stage.setTitle("Company Login");
         stage.show();
 
-        // -------- LOGIN ACTION --------
         loginButton.setOnAction(e -> {
 
             String email = emailField.getText();

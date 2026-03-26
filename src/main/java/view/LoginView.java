@@ -16,7 +16,6 @@ public class LoginView {
 
     public void show(Stage stage){
 
-        // -------- LEFT PANEL --------
         Label welcomeTitle = new Label("Welcome Back!");
         welcomeTitle.setStyle("-fx-font-size:28px; -fx-text-fill:white;");
 
@@ -33,7 +32,6 @@ public class LoginView {
                         "-fx-background-radius:20;"
         );
 
-        // -------- LOGIN FORM --------
         Label loginTitle = new Label("Login");
         loginTitle.setStyle("-fx-font-size:22px;");
 
@@ -112,7 +110,6 @@ public class LoginView {
                         "-fx-background-radius:20;"
         );
 
-        // -------- CARD LAYOUT --------
         HBox card = new HBox(leftPanel, rightPanel);
         card.getStyleClass().add("card");
         card.setStyle(
@@ -128,7 +125,6 @@ public class LoginView {
 
         card.setEffect(shadow);
 
-        // -------- BACKGROUND --------
         StackPane root = new StackPane(card);
         root.setAlignment(Pos.CENTER);
         root.setStyle(
@@ -141,7 +137,6 @@ public class LoginView {
         stage.setScene(scene);
         stage.show();
 
-        // -------- LOGIN BUTTON ACTION --------
         loginButton.setOnAction(e -> {
 
             String email = emailField.getText();
@@ -163,7 +158,6 @@ public class LoginView {
 
             if(student != null){
 
-                // ⭐ ADD THIS HERE
                 if(remember.isSelected()){
                     dao.rememberUser(email);
                 }

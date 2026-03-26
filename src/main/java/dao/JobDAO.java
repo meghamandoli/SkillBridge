@@ -45,7 +45,7 @@ public class JobDAO {
         try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery()){
-            
+
             if(rs.next()){
                 count = rs.getInt(1);
             }

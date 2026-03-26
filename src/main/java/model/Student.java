@@ -11,7 +11,6 @@ public class Student {
     private int backlogs;
     private String skills;
 
-    // Original Constructor
     public Student(int id, String name, String email, String password, double cgpa, String branch) {
         this.id = id;
         this.name = name;
@@ -23,7 +22,6 @@ public class Student {
         this.skills = "";
     }
 
-    // Extended Constructor
     public Student(int id, String name, String email, String password, double cgpa, String branch, int backlogs, String skills) {
         this.id = id;
         this.name = name;
@@ -36,8 +34,6 @@ public class Student {
     }
 
     public Student() {}
-
-    // Getters and Setters
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
